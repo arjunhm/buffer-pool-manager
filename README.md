@@ -5,11 +5,11 @@ A database buffer pool manager is a component within a database management syste
 This repo is my implementation of a database buffer pool manager
 
 ## Features
-**Buffer Management**: Manages a pool of buffers in memory for storage and retrieval of data pages.
-**Page Fetching**: Supports fetching pages from disk into the buffer pool.
-**Page Pinning and Unpinning**: Implements pinning and unpinning of pages, allowing control over buffer pool pages that should remain in memory.
-**Dirty Page Management**: Tracks and flushes dirty pages (modified pages) back to disk, ensuring data integrity and persistence.
-**FIFO Replacer**: Utilizes a simple FIFO replacer algorithm for page replacement.
+**Buffer Management**: Manages a pool of buffers in memory for storage and retrieval of data pages.  
+**Page Fetching**: Supports fetching pages from disk into the buffer pool.  
+**Page Pinning and Unpinning**: Implements pinning and unpinning of pages, allowing control over buffer pool pages that should remain in memory.  
+**Dirty Page Management**: Tracks and flushes dirty pages (modified pages) back to disk, ensuring data integrity and persistence.  
+**FIFO Replacer**: Utilizes a simple FIFO replacer algorithm for page replacement.  
 
 ## To-Do
 - [x] FIFO Replacer
