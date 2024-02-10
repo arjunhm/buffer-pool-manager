@@ -11,8 +11,8 @@ class CustomByteArray(bytearray):
 
 
 class Page:
-    def __init__(self):
-        self.id = None
+    def __init__(self, page_id):
+        self.id = page_id
         self.data = CustomByteArray(PAGE_SIZE)
         self.ref_count = 0
         self.is_dirty = False
