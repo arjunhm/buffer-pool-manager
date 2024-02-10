@@ -48,7 +48,6 @@ class BufferPoolManager:
             page_tbd = self.frames[frame_id]
             if page_tbd.is_dirty:
                 self.disk_manager.write_page(page_tbd)
-                page_tbd.is_dirty = False
             del self.page_table[page_tbd.id]
 
         page = self.disk_manager.read_page(page_id)
