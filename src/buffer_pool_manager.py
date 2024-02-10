@@ -17,7 +17,7 @@ class StaticArray(list):
 class BufferPoolManager:
     def __init__(self):
         self.frames = StaticArray(MAX_FRAMES)
-        self.free_list = [i for i in range(MAX_FRAMES)] # TODO Make this StaticArray
+        self.free_list = [i for i in range(MAX_FRAMES)]  # TODO Make this StaticArray
         self.page_table = dict()  # d[page_id] = frame_id
         self.replacer = FIFOReplacer()  # Replacement Policy
         self.disk_manager = DiskManager()
