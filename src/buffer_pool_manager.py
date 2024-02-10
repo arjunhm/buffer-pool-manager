@@ -44,11 +44,12 @@ class BufferPoolManager:
         if frame_id is None:
             return None
 
-        if not is_from_free_list:
+        if is_from_free_list is False:
             page_tbd = self.frames[frame_id]
-            if page_tbd.is_dirty:
-                self.disk_manager.write_page(page_tbd)
-            del self.page_table[page_tbd.id]
+            if page_tbd:
+                if page_tbd.is_dirty:
+                    self.disk_manager.write_page(page_tbd)
+                del self.page_table[page_tbd.id]
 
         page = self.disk_manager.read_page(page_id)
 
@@ -69,7 +70,6 @@ class BufferPoolManager:
 
             if page.ref_count <= 0:
                 self.replacer.unpin(frame_id)
-
             return
 
         raise PageNotFoundError()
@@ -79,12 +79,49 @@ class BufferPoolManager:
 
         if frame_id:
             page = self.frames[frame_id]
-            page.decr_ref_count()
-            self.disk_manager.write_page(page)
 
+            self.disk_manager.write_page(page)
+            page.is_dirty = False
+
+            page.decr_ref_count()
             if page.ref_count <= 0:
                 self.replacer.unpin(frame_id)
-            page.is_dirty = False
             return True
-
         return False
+
+    def flush_all_pages(self):
+        for page_id in self.page_table.keys():
+            self.flush_page(page_id)
+
+    def new_page(self) -> Page:
+        frame_id, is_from_free_list = self.get_free_frame()
+        if frame_id is None:
+            return None
+
+        if is_from_free_list is False:
+            page_tbd = self.frames[frame_id]
+            if page_tbd:
+                if page_tbd.is_dirty:
+                    self.disk_manager.write_page(page_tbd)
+                del self.page_table[page_tbd.id]
+
+        page_id = self.disk_manager.allocate_page()
+        page = Page(page_id)
+
+        page.incr_ref_count()
+        self.replacer.pin(frame_id)
+        self.frames[frame_id] = page
+        self.page_table[page_id] = frame_id
+
+        return page
+
+    def delete_page(self, page_id):
+        frame_id = self.page_table.get(page_id)
+        if frame_id is None:
+            return None
+
+        del self.page_table[page_id]
+        self.replacer.pin(frame_id)
+        self.frames.remove(frame_id)  # ? remove frame from frames??
+        self.free_list.append(frame_id)
+        self.disk_manager.deallocate_page(page_id)
