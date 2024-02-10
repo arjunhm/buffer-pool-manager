@@ -17,7 +17,7 @@ class StaticArray(list):
 class BufferPoolManager:
     def __init__(self):
         self.frames = StaticArray(MAX_FRAMES)
-        self.free_list = [i for i in range(MAX_FRAMES)]
+        self.free_list = [i for i in range(MAX_FRAMES)] # TODO Make this StaticArray
         self.page_table = dict()  # d[page_id] = frame_id
         self.replacer = FIFOReplacer()  # Replacement Policy
         self.disk_manager = DiskManager()
@@ -28,10 +28,12 @@ class BufferPoolManager:
             self.free_list = self.free_list[1:]
             return frame_id, False
 
+        # Get frame from replacer
         frame_id = self.replacer.get_victim()
         return frame_id, True
 
     def fetch_page(self, page_id: int) -> Page:
+        # Get frame from page table
         frame_id = self.page_table.get(page_id)
         if frame_id:
             page = self.frames[frame_id]
@@ -39,17 +41,21 @@ class BufferPoolManager:
             self.replacer.pin(frame_id)
             return page
 
+        # Get frame from free list or replacement policy
         frame_id, is_from_free_list = self.get_free_frame()
         if frame_id is None:
             return None
 
+        # If frame fetched from eviction
         if is_from_free_list is False:
             page_tbd = self.frames[frame_id]
+            # Flush out page and remove it from frames
             if page_tbd:
                 if page_tbd.is_dirty:
                     self.disk_manager.write_page(page_tbd)
                 del self.page_table[page_tbd.id]
 
+        # Read page from disk
         page = self.disk_manager.read_page(page_id)
 
         self.frames[frame_id] = page
@@ -92,12 +98,15 @@ class BufferPoolManager:
             self.flush_page(page_id)
 
     def new_page(self) -> Page:
+        # Get frame from free list or replacement policy
         frame_id, is_from_free_list = self.get_free_frame()
         if frame_id is None:
             return None
 
+        # If frame fetched from eviction
         if is_from_free_list is False:
             page_tbd = self.frames[frame_id]
+            # Flush out page and remove from frames
             if page_tbd:
                 if page_tbd.is_dirty:
                     self.disk_manager.write_page(page_tbd)
