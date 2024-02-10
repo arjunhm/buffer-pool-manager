@@ -1,5 +1,4 @@
 class FIFOReplacer:
-
     def __init__(self):
         self.list = list()
 
@@ -17,5 +16,6 @@ class FIFOReplacer:
         return None
 
 
-
-
+class LRUReplacer:
+    def __init__(self):
+        pass

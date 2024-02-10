@@ -40,7 +40,6 @@ class BufferPoolManager:
             return page
 
         frame_id, is_from_free_list = self.get_free_frame()
-
         if frame_id is None:
             return None
 
@@ -70,7 +69,6 @@ class BufferPoolManager:
 
             if page.ref_count <= 0:
                 self.replacer.unpin(frame_id)
-            return
 
         raise PageNotFoundError()
 

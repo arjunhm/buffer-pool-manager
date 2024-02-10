@@ -1,7 +1,3 @@
-"""
-Mock Disk Manager
-"""
-
 from src.page import Page
 
 MAX_NUM_PAGES = 15
