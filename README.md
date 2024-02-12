@@ -15,3 +15,4 @@ This repo is my implementation of a database buffer pool manager
 - [x] FIFO Replacer
 - [ ] LRU Replacer
 - [ ] Clock Replacer
+- [ ] Rewrite in Go (work in progres)
